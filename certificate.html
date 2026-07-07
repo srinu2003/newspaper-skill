@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Cormorant+Garamond:wght@400;600&family=Dancing+Script:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --cert-width: 1056px;
+      --cert-height: 816px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #e5e7eb;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 30px;
+      min-width: calc(var(--cert-width) + 60px);
+      overflow: auto;
+    }
+
+    /* Letter landscape at 96 DPI: 11in x 8.5in = 1056px x 816px */
+    .certificate {
+      width: var(--cert-width);
+      height: var(--cert-height);
+      background: #fffdf7;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+      /* Outer border */
+      border: 10px double #1f2937;
+    }
+
+    /* Gold inner border */
+    .certificate::before {
+      content: "";
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      border: 1.5px solid #c4a962;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Corner ornaments */
+    .corner {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      z-index: 11;
+    }
+
+    .corner svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .corner.tl {
+      top: 22px;
+      left: 22px;
+    }
+
+    .corner.tr {
+      top: 22px;
+      right: 22px;
+      transform: scaleX(-1);
+    }
+
+    .corner.bl {
+      bottom: 22px;
+      left: 22px;
+      transform: scaleY(-1);
+    }
+
+    .corner.br {
+      bottom: 22px;
+      right: 22px;
+      transform: scale(-1);
+    }
+
+    /* Left decorative strip */
+    .left-strip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 60px;
+      background: #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .left-strip-text {
+      color: #c4a962;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      letter-spacing: 5px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Main content area */
+    .content {
+      position: absolute;
+      left: 72px;
+      right: 24px;
+      top: 28px;
+      bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 36px 20px 36px;
+    }
+
+    .institution {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 6px;
+      color: #6b7280;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .gold-line {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #c4a962, transparent);
+      margin: 4px auto;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 46px;
+      font-weight: 700;
+      color: #111827;
+      margin: 8px 0 4px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .name-section {
+      margin: 6px 0 8px;
+      text-align: center;
+    }
+
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 44px;
+      font-weight: 500;
+      color: #111827;
+      padding: 4px 48px;
+      display: inline-block;
+      border-bottom: 2px solid #c4a962;
+    }
+
+    .body-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: #4b5563;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .event-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f2937;
+      letter-spacing: 1px;
+      margin: 2px 0 4px;
+    }
+
+    /* Footer with signatures */
+    .footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+      padding: 0 12px;
+    }
+
+    .sig-block {
+      text-align: center;
+      width: 200px;
+    }
+
+    .cursive-sig {
+      font-family: 'Dancing Script', cursive;
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a3a5c;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      min-height: 36px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .date-sig {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      color: #374151;
+      font-weight: 600;
+      min-height: 36px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .sig-line {
+      width: 180px;
+      height: 1px;
+      background: #374151;
+      margin: 0 auto 5px;
+    }
+
+    .sig-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      color: #6b7280;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Seal */
+    .seal {
+      position: absolute;
+      bottom: 36px;
+      left: 90px;
+      width: 88px;
+      height: 88px;
+    }
+
+    /* QR + cert ID — top right corner */
+    .qr-block {
+      position: absolute;
+      top: 78px;
+      right: 60px;
+      text-align: center;
+      z-index: 12;
+      width: 116px;
+    }
+
+    .qr-block img {
+      width: 68px;
+      height: 68px;
+      display: block;
+      margin: 0 auto 3px;
+      border: 1px solid #e5e0d0;
+      padding: 2px;
+      background: #fff;
+      border-radius: 3px;
+      object-fit: contain;
+    }
+
+    .qr-block img.broken {
+      display: none;
+    }
+
+    .qr-placeholder {
+      width: 68px;
+      height: 68px;
+      display: none;
+      margin: 0 auto 3px;
+      border: 1px dashed #c4a962;
+      background: rgba(196, 169, 98, 0.05);
+      border-radius: 3px;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 9px;
+      color: #c4a962;
+      letter-spacing: 0.5px;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .qr-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 9px;
+      color: #9ca3af;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .cert-id-badge {
+      margin-top: 6px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 10px;
+      color: #6b7280;
+      border: 1px solid #c4a962;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(196, 169, 98, 0.06);
+      letter-spacing: 0.6px;
+      min-height: 18px;
+      min-width: 102px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+    }
+
+    .cert-id-badge:empty::before {
+      content: "CERT-ID";
+      color: #9ca3af;
+    }
+
+    @media print {
+
+      @page {
+        /* size: 1056px 816px; */
+        size: 11in 8.5in;
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: var(--cert-width);
+        height: var(--cert-height);
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        overflow: hidden;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 0;
+      }
+
+      .certificate {
+        margin: 0;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body class="certificate">
+
+  <!-- Corner ornaments -->
+  <div class="corner tl">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 44 L4 4 L44 4" stroke="#c4a962" stroke-width="1.5" fill="none" />
+      <path d="M4 28 Q4 4 28 4" stroke="#c4a962" stroke-width="0.8" fill="none" stroke-dasharray="2 2" />
+      <circle cx="4" cy="4" r="3" fill="#c4a962" />
+      <circle cx="24" cy="4" r="1.5" fill="#c4a962" opacity="0.5" />
+      <circle cx="4" cy="24" r="1.5" fill="#c4a962" opacity="0.5" />
+    </svg>
+  </div>
+  <div class="corner tr">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 44 L4 4 L44 4" stroke="#c4a962" stroke-width="1.5" fill="none" />
+      <path d="M4 28 Q4 4 28 4" stroke="#c4a962" stroke-width="0.8" fill="none" stroke-dasharray="2 2" />
+      <circle cx="4" cy="4" r="3" fill="#c4a962" />
+      <circle cx="24" cy="4" r="1.5" fill="#c4a962" opacity="0.5" />
+      <circle cx="4" cy="24" r="1.5" fill="#c4a962" opacity="0.5" />
+    </svg>
+  </div>
+  <div class="corner bl">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 44 L4 4 L44 4" stroke="#c4a962" stroke-width="1.5" fill="none" />
+      <path d="M4 28 Q4 4 28 4" stroke="#c4a962" stroke-width="0.8" fill="none" stroke-dasharray="2 2" />
+      <circle cx="4" cy="4" r="3" fill="#c4a962" />
+      <circle cx="24" cy="4" r="1.5" fill="#c4a962" opacity="0.5" />
+      <circle cx="4" cy="24" r="1.5" fill="#c4a962" opacity="0.5" />
+    </svg>
+  </div>
+  <div class="corner br">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 44 L4 4 L44 4" stroke="#c4a962" stroke-width="1.5" fill="none" />
+      <path d="M4 28 Q4 4 28 4" stroke="#c4a962" stroke-width="0.8" fill="none" stroke-dasharray="2 2" />
+      <circle cx="4" cy="4" r="3" fill="#c4a962" />
+      <circle cx="24" cy="4" r="1.5" fill="#c4a962" opacity="0.5" />
+      <circle cx="4" cy="24" r="1.5" fill="#c4a962" opacity="0.5" />
+    </svg>
+  </div>
+
+  <!-- Left dark strip -->
+  <div class="left-strip">
+    <span class="left-strip-text">Institute of Technology &nbsp;·&nbsp; Est. 2001</span>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="institution">Institute of Technology</div>
+    <div class="gold-line"></div>
+
+    <div class="title">Certificate of Participation</div>
+
+    <div class="subtitle">This is to certify that</div>
+
+    <div class="name-section">
+      <div class="name">
+        <?= name ?>
+      </div>
+    </div>
+
+    <div class="body-text">has successfully participated in the prestigious</div>
+    <div class="event-name">
+      <?= event ?>
+    </div>
+    <div class="body-text">demonstrating exceptional innovation, technical excellence, and collaborative spirit.</div>
+
+    <!-- Signatures -->
+    <div class="footer">
+
+      <div class="sig-block">
+        <div class="cursive-sig">Dr. R. Sharma</div>
+        <div class="sig-line"></div>
+        <div class="sig-label">Director</div>
+      </div>
+
+      <div class="sig-block">
+        <div class="date-sig">
+          <?= date ?>
+        </div>
+        <div class="sig-line"></div>
+        <div class="sig-label">Date</div>
+      </div>
+
+      <div class="sig-block">
+        <div class="cursive-sig">Prof. A. Rao</div>
+        <div class="sig-line"></div>
+        <div class="sig-label">Program Chair</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Gold seal (bottom left, inside strip) -->
+  <svg class="seal" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="44" cy="44" r="38" stroke="#c4a962" stroke-width="2" />
+    <circle cx="44" cy="44" r="32" stroke="#c4a962" stroke-width="0.8" stroke-dasharray="3 3" />
+    <circle cx="44" cy="44" r="26" stroke="#c4a962" stroke-width="1" />
+    <text x="44" y="40" text-anchor="middle" font-family="'Playfair Display', serif" font-size="7" fill="#c4a962"
+      letter-spacing="1">OFFICIAL</text>
+    <text x="44" y="50" text-anchor="middle" font-family="'Playfair Display', serif" font-size="7" fill="#c4a962"
+      letter-spacing="1">SEAL</text>
+    <text x="44" y="60" text-anchor="middle" font-family="'Playfair Display', serif" font-size="6" fill="#c4a962"
+      opacity="0.7">✦ 2026 ✦</text>
+  </svg>
+
+  <!-- QR + Cert ID — top right -->
+  <div class="qr-block">
+    <img src="<?= qrCode ?>" alt="Scan to verify"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="qr-placeholder">QR after<br>deploy</div>
+    <div class="qr-label">SCAN TO VERIFY</div>
+    <div class="cert-id-badge">
+      <?= certId ?>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

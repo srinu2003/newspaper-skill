@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Broadsheet Spread - Print</title>
+<style>
+  :root {
+    --page-w: 15in;
+    --page-h: 22.75in;
+    --margin: 0.5in;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 40px;
+    background: #666;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .controls button {
+    padding: 10px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    background: #2b6cb0;
+    color: white;
+    cursor: pointer;
+  }
+
+  .controls button:hover {
+    background: #2c5282;
+  }
+
+  .controls span {
+    color: #eee;
+    font-size: 14px;
+  }
+
+  /* The spread: two broadsheet pages side by side */
+  .spread {
+    width: calc(var(--page-w) * 2);
+    height: var(--page-h);
+    background: white;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  .border {
+    position: absolute;
+    top: var(--margin);
+    left: var(--margin);
+    right: var(--margin);
+    bottom: var(--margin);
+    border: 2px solid black;
+  }
+
+  .fold-line {
+    position: absolute;
+    top: var(--margin);
+    bottom: var(--margin);
+    left: 50%;
+    width: 0;
+    border-left: 1px dashed black;
+  }
+
+  /* Print-specific rules */
+  @media print {
+    @page {
+      size: 30in 22.75in landscape; /* Literal value, no calc() */
+      margin: 0;
+    }
+
+    body {
+      background: white;
+      padding: 0;
+      margin: 0;
+      display: block;
+    }
+
+    .controls {
+      display: none;
+    }
+
+    .spread {
+      box-shadow: none;
+      width: calc(var(--page-w) * 2);
+      height: var(--page-h);
+      page-break-after: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="controls">
+    <button onclick="window.print()">Print PDF</button>
+    <span>Broadsheet spread &mdash; 30in &times; 22.75in landscape</span>
+  </div>
+
+  <div class="spread">
+    <div class="border"></div>
+    <div class="fold-line"></div>
+  </div>
+
+  <script>
+    // Nothing fancy needed — window.print() triggers the browser's
+    // print dialog, and the @page CSS rule forces the exact page size.
+    // In Chrome/Edge, choosing "Save as PDF" as the destination in the
+    // print dialog produces a PDF at exactly 30in x 22.75in.
+  </script>
+
+</body>
+</html>

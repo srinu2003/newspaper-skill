@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Daily Chronicle - The World's Finest Digital Broadsheet. Breaking news, deep insights, and historical editorial coverage.">
+  <title>The Daily Chronicle — Digital Broadsheet</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts: Playfair Display for headers, UnifrakturMaguntia for gothic title, and Lora / Inter for text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+</head>
+<body class="theme-parchment">
+
+  <!-- TOP BAR: Navigation, Printing, and Theme Switcher -->
+  <div class="top-nav">
+    <div class="top-nav-container">
+      <div class="edition-label">
+        <span class="edition-title">THE DAILY CHRONICLE</span>
+        <span class="edition-type">— Broad Sheet Edition</span>
+      </div>
+      <div class="header-widgets">
+        <button class="print-btn" id="print-newspaper-btn" aria-label="Print Full Broadsheet">Print Edition</button>
+        <div class="theme-picker">
+          <button class="theme-btn active" data-theme="parchment" id="btn-theme-parchment" aria-label="Parchment Theme">Parchment</button>
+          <button class="theme-btn" data-theme="light" id="btn-theme-light" aria-label="Modern Print Theme">Modern Light</button>
+          <button class="theme-btn" data-theme="dark" id="btn-theme-dark" aria-label="Midnight Edition Theme">Midnight</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="newspaper-container">
+    
+    <!-- MASTHEAD / HEADER -->
+    <header class="masthead">
+      <div class="masthead-meta-top">
+        <span>No. 41,208</span>
+        <span>ESTABLISHED 1888</span>
+        <span>LONDON, WEDNESDAY, JULY 8, 2026</span>
+      </div>
+      
+      <h1 class="masthead-title">The Daily Chronicle</h1>
+      <p class="masthead-tagline">The World's Finest Digital Broadsheet • Today's News Today</p>
+      
+      <div class="masthead-meta-bottom">
+        <span>WEATHER: FAIR</span>
+        <span>ONE SHILLING & SIXPENCE</span>
+        <span>LATEST TELEGRAPHIC DISPATCHES</span>
+      </div>
+    </header>
+
+    <!-- MAIN BROADSHEET GRID -->
+    <main class="broadsheet-grid">
+      
+      <!-- LEFT + CENTER COLUMN: LEAD STORIES -->
+      <section class="main-content-area">
+        
+        <!-- HERO LEAD STORY -->
+        <article class="lead-story article-card" data-article-id="lead-story">
+          <h2 class="article-headline font-display">STEAM-POWERED AIRSHIPS REVOLUTIONIZE TRANSATLANTIC TRAVEL</h2>
+          <h3 class="article-subhead">Maiden voyage of the 'Aeon Star' sets record pace, crossing from London to New York in just forty-eight hours.</h3>
+          
+          <div class="article-author-line">
+            <span>By ARTHUR PENDRICK, Aviation Correspondent</span>
+            <span class="dot-separator"></span>
+            <span>July 8, 2026</span>
+          </div>
+
+          <div class="article-media">
+            <img src="lead_story.png" alt="Futuristic steam airship over 19th-century metropolitan skyline" class="newspaper-img">
+            <p class="img-caption">The massive luxury airship 'Aeon Star' gliding majestically above the metropolis before commencing her record-breaking flight across the Atlantic.</p>
+          </div>
+
+          <div class="article-body-columns columns-3">
+            <p class="paragraph-lead"><span class="dropcap">I</span>n a historic feat of modern engineering, the gargantuan airship <em>Aeon Star</em> successfully concluded her maiden voyage across the Atlantic Ocean yesterday evening, arriving in New York Harbour amidst a roaring chorus of steam whistles and cheering spectators.</p>
+            <p>The journey, covering more than three thousand miles of open ocean, was completed in a mere forty-eight hours and twelve minutes. This cuts the previous crossing record, held by the steamliner <em>Great Western</em>, by more than half, signaling a new age of commerce and travel.</p>
+            <p>Constructed by the Royal Aeronautical Ironworks in Bristol, the vessel is kept aloft by twenty individual cells of pressurized non-flammable helium gas, propelled by four massive coal-fired steam engines driving multi-blade bronze propellers.</p>
+            <p>Passage aboard the vessel represents the height of luxury, with a grand dining saloon, private staterooms, and a promenade deck featuring floor-to-ceiling reinforced glass viewing galleries. Prominent figures from around the world were counted among the first-class passengers.</p>
+            <p>Engineers reported that the steam boilers performed flawlessly throughout the journey, maintaining a steady cruising speed of eighty knots despite encountering heavy crosswinds near the Grand Banks of Newfoundland. Plans are already underway to double the fleet size by next autumn.</p>
+          </div>
+          
+          <div class="read-more-btn-wrap">
+            <button class="read-more-btn" aria-haspopup="dialog">Read Full Transcript</button>
+          </div>
+        </article>
+
+        <hr class="vintage-divider">
+
+        <!-- SECONDARY FRONT PAGE STORY -->
+        <div class="secondary-stories-row">
+          
+          <article class="secondary-story article-card" data-article-id="calc-machines">
+            <h2 class="article-headline font-display">THE COAL-FIRED ANALYTICAL ENGINE</h2>
+            <h3 class="article-subhead">Babbage’s grand design scaled for national industrial calculation.</h3>
+            <div class="article-author-line">
+              <span>By LADY ADA LOVELACE II</span>
+            </div>
+            <div class="article-body-columns columns-2">
+              <p><span class="dropcap">T</span>he Ministry of Computing has formally opened the central computing facility in Birmingham. Powered by two massive boilers, the new steam-driven mechanical computer is capable of tabulating census data in minutes rather than decades.</p>
+              <p>The system utilizes thousands of brass gears, shafts, and punch cards to execute complex algorithm suites, ensuring precision calculations for trade routes and maritime navigation tables nationwide.</p>
+            </div>
+            <div class="read-more-btn-wrap">
+              <button class="read-more-btn" aria-haspopup="dialog">Read Full Article</button>
+            </div>
+          </article>
+
+          <hr class="vertical-divider">
+
+          <article class="secondary-story article-card" data-article-id="rail-expansion">
+            <h2 class="article-headline font-display">TRANS-SIBERIAN LINE EXPANDS</h2>
+            <h3 class="article-subhead">Steel rails forge path through frozen plains to the East.</h3>
+            <div class="article-author-line">
+              <span>By NIKOLAI VOLKOV</span>
+            </div>
+            <div class="article-body-columns columns-2">
+              <p><span class="dropcap">A</span> new rail spike has been driven in the heart of Irkutsk, bridging the vast gap between Moscow and the Far East. The locomotive <em>The Northern Giant</em> successfully hauled fifty coaches of cargo through the Urals in record winter temperatures.</p>
+              <p>This expansion promises to open unprecedented trade access to tea and silk markets, while introducing standard time coordination along the entire line.</p>
+            </div>
+            <div class="read-more-btn-wrap">
+              <button class="read-more-btn" aria-haspopup="dialog">Read Full Article</button>
+            </div>
+          </article>
+
+        </div>
+
+      </section>
+
+      <!-- SEPARATOR BETWEEN MAIN CONTENT & SIDEBAR -->
+      <hr class="vertical-divider main-sidebar-divider">
+
+      <!-- RIGHT COLUMN: SIDEBAR -->
+      <aside class="sidebar-area">
+        
+        <!-- SIDEBAR SECTION: SCIENCE CORNER -->
+        <article class="sidebar-section-card article-card" data-article-id="star-signal">
+          <div class="sidebar-label">SCIENCE & COSMOLOGY</div>
+          <h2 class="article-headline font-display small-headline">HARMONIC COSMIC SIGNAL DETECTED</h2>
+          <div class="article-media small-media">
+            <img src="science_story.png" alt="Astronomical clockwork dial and planetary mechanism" class="newspaper-img">
+          </div>
+          <p class="article-intro-text"><span class="dropcap">A</span>stronomers using the newly constructed Greenwich Optical Array have registered a rhythmic electrical pulse originating from the constellation of Orion.</p>
+          <p class="article-intro-text">The signal, repeating every three point one seconds, resembles a harmonic series that cannot be explained by natural planetary or solar operations, sparking debate among the Royal Society.</p>
+          <div class="read-more-btn-wrap">
+            <button class="read-more-btn" aria-haspopup="dialog">Read Details</button>
+          </div>
+        </article>
+
+        <hr class="vintage-divider">
+
+        <!-- SIDEBAR SECTION: INTERACTIVE CROSSWORD -->
+        <section class="sidebar-section-card crossword-section">
+          <div class="sidebar-label">THE DAILY BRAIN TEASER</div>
+          <h3 class="crossword-title font-display">A Miniature Crossword</h3>
+          <p class="crossword-subtitle">Solve the 3×3 grid. Across & Down answers are identical!</p>
+          
+          <div class="crossword-container">
+            <div class="crossword-grid" id="crossword-grid">
+              <!-- Row 1 -->
+              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="0" id="cell-0-0" aria-label="Cell Row 1 Column 1">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="1" id="cell-0-1" aria-label="Cell Row 1 Column 2">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="2" id="cell-0-2" aria-label="Cell Row 1 Column 3">
+              
+              <!-- Row 2 -->
+              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="0" id="cell-1-0" aria-label="Cell Row 2 Column 1">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="1" id="cell-1-1" aria-label="Cell Row 2 Column 2">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="2" id="cell-1-2" aria-label="Cell Row 2 Column 3">
+              
+              <!-- Row 3 -->
+              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="0" id="cell-2-0" aria-label="Cell Row 3 Column 1">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="1" id="cell-2-1" aria-label="Cell Row 3 Column 2">
+              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="2" id="cell-2-2" aria-label="Cell Row 3 Column 3">
+            </div>
+            
+            <div class="crossword-clues">
+              <div class="clue-list">
+                <strong>Clues (Across/Down):</strong>
+                <ol>
+                  <li>1. A small piece or fragment.</li>
+                  <li>2. Water in solid, frozen form.</li>
+                  <li>3. The number after nine.</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="crossword-actions">
+              <button class="action-btn" id="verify-crossword-btn">Verify Solution</button>
+              <button class="action-btn btn-secondary" id="reset-crossword-btn">Reset</button>
+            </div>
+            <div class="crossword-feedback" id="crossword-feedback" role="status"></div>
+          </div>
+        </section>
+
+        <hr class="vintage-divider">
+
+        <!-- SIDEBAR SECTION: EDITORIAL COLUMN -->
+        <article class="sidebar-section-card article-card" data-article-id="editorial-speed">
+          <div class="sidebar-label">EDITORIAL OPINION</div>
+          <h2 class="article-headline font-display small-headline">THE SPEED OF MODERN LIFE: A CAUTIONARY TALE</h2>
+          <p class="opinion-quote">"We fly across oceans and tabulate cities in seconds, but have we lost the art of the slow, deliberate thought?"</p>
+          <div class="article-author-line">
+            <span>By SAMUEL SPENCER, Editor</span>
+          </div>
+          <p class="article-intro-text">As the steam whistles shriek and computing gears click, one must pause and ponder the trajectory of this rapid century. To rush is to skim the surface of life, leaving deep contemplation in the dust of progress...</p>
+          <div class="read-more-btn-wrap">
+            <button class="read-more-btn" aria-haspopup="dialog">Read Editorial</button>
+          </div>
+        </article>
+
+      </aside>
+
+    </main>
+
+    <!-- VINTAGE CLASSIFIED ADS SECTION -->
+    <hr class="vintage-divider double">
+    <section class="classifieds">
+      <div class="classifieds-header font-display">THE DAILY CHRONICLE CLASSIFIED ADVERTISEMENTS</div>
+      <div class="classifieds-grid">
+        <div class="classified-item">
+          <strong>WANTED: BOILER ASSISTANT</strong>
+          <p>Must have 2 years experience with high-pressure coal systems. Inquire in person at the Royal Dockyard, East Boiler room. Wages: 12s per week.</p>
+        </div>
+        <div class="classified-item">
+          <strong>FOR SALE: MECHANICAL TICKER</strong>
+          <p>One genuine telegraphic receiver, slightly worn, with three rolls of paper tape. Perfect for private merchant house. 40 shillings or nearest offer.</p>
+        </div>
+        <div class="classified-item">
+          <strong>DENTISTRY OF EXCELLENCE</strong>
+          <p>Teeth extracted painless with the aid of the newly discovered laughing gas. Dr. Sterling, 14 Baker St. Consultations daily 9am - 4pm.</p>
+        </div>
+        <div class="classified-item">
+          <strong>LOST: BRASS POCKET WATCH</strong>
+          <p>Engraved with initials 'G.H.' and a crest representing a falcon. Lost near London Bridge on Friday eve. Reward offered upon return to station office.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="newspaper-footer">
+      <div class="footer-decor"></div>
+      <p class="copyright">Copyright © 1888-2026 The Daily Chronicle Printing Syndicate. All Rights Reserved. Delivered via Telegraphic and Fiber-Optic networks.</p>
+    </footer>
+
+  </div>
+
+  <!-- ARTICLE DETAIL DIALOG (MODAL) -->
+  <div class="article-modal" id="article-modal" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">&times;</button>
+      <div class="modal-newspaper-frame">
+        <div class="modal-masthead-mini">THE DAILY CHRONICLE — READER VIEW</div>
+        <div class="modal-article-container" id="modal-article-content">
+          <!-- Dynamically inserted content will go here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

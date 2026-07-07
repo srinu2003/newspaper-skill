@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Daily Herald — Print</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+<style>
+  /* ===== Physical page tokens (unchanged from the print-precision version) ===== */
+  :root {
+    --page-w: 15in;
+    --page-h: 22.75in;
+    --margin: 0.5in;
+  }
+
+  /* ===== Theme tokens (from the uploaded theme system) ===== */
+  .theme-parchment {
+    --bg-page: #666;
+    --bg-card: #fdfcf7;
+    --box-bg: #f5f2e9;
+    --text-color: #24221f;
+    --text-muted: #5c5750;
+    --border-color: #b9b2a0;
+    --border-strong: #3b3730;
+    --accent-color: #8c2d2d;
+    --accent-hover: #b03a3a;
+    --shadow-color: rgba(43, 38, 30, 0.35);
+  }
+  .theme-light {
+    --bg-page: #94a3b8;
+    --bg-card: #ffffff;
+    --box-bg: #f1f5f9;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --border-color: #cbd5e1;
+    --border-strong: #0f172a;
+    --accent-color: #1e40af;
+    --accent-hover: #3b82f6;
+    --shadow-color: rgba(0, 0, 0, 0.25);
+  }
+  .theme-dark {
+    --bg-page: #0b0b0b;
+    --bg-card: #1e1e1e;
+    --box-bg: #262626;
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --border-color: #444444;
+    --border-strong: #e0e0e0;
+    --accent-color: #d35400;
+    --accent-hover: #e67e22;
+    --shadow-color: rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 40px;
+    background: var(--bg-page);
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    overflow: auto;
+    transition: background-color 0.25s ease;
+  }
+
+  /* ===== Top control bar: print + theme picker ===== */
+  .controls {
+    position: sticky;
+    left: 40px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-family: 'Inter', Arial, sans-serif;
+  }
+  .controls button.print-btn {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    border-radius: 4px;
+    background: var(--accent-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .controls button.print-btn:hover { background: var(--accent-hover); }
+  .controls span.label { color: #eee; font-size: 13px; }
+
+  .theme-picker { display: flex; gap: 6px; }
+  .theme-btn {
+    background: transparent;
+    border: 1px solid #eee;
+    color: #eee;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: all 0.2s ease;
+  }
+  .theme-btn:hover { background: rgba(255,255,255,0.15); }
+  .theme-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+  }
+
+  /* ===== The spread ===== */
+  .spread {
+    width: calc(var(--page-w) * 2);
+    height: var(--page-h);
+    background: var(--bg-card);
+    position: relative;
+    box-shadow: 0 0 20px var(--shadow-color);
+    transition: background-color 0.25s ease;
+  }
+
+  .border {
+    position: absolute;
+    top: var(--margin); left: var(--margin);
+    right: var(--margin); bottom: var(--margin);
+    border: 2px solid var(--border-strong);
+  }
+
+  .fold-line {
+    position: absolute;
+    top: var(--margin); bottom: var(--margin);
+    left: 50%;
+    border-left: 1px dashed var(--border-color);
+  }
+
+  .pages {
+    position: absolute;
+    top: calc(var(--margin) + 14px);
+    bottom: calc(var(--margin) + 14px);
+    left: calc(var(--margin) + 14px);
+    right: calc(var(--margin) + 14px);
+    display: flex;
+  }
+
+  .page {
+    width: 50%;
+    padding: 0 20px;
+    overflow: hidden;   /* safety clip: physical page boundary */
+    position: relative;
+  }
+  .page.left { padding-left: 4px; }
+  .page.right { padding-right: 4px; }
+
+  .page-content {
+    transform-origin: top left;
+  }
+
+  /* ===== Word of the Day — corner box ===== */
+  .corner-word-box {
+    float: right;
+    width: 150px;
+    border: 2px solid var(--border-strong);
+    padding: 8px;
+    margin: 0 0 8px 12px;
+    background: var(--box-bg);
+    text-align: center;
+  }
+  .corner-word-box .kicker { font-family: 'Inter', sans-serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+  .corner-word-box .word { font-size: 17px; font-weight: 700; margin: 3px 0 1px; color: var(--accent-color); }
+  .corner-word-box .pos { font-style: italic; font-size: 9px; color: var(--text-muted); margin-bottom: 4px; }
+  .corner-word-box .def { font-size: 9.5px; line-height: 1.3; }
+
+  /* ===== Masthead ===== */
+  .masthead {
+    text-align: center;
+    border-bottom: 3px double var(--border-strong);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .masthead .name {
+    font-family: 'UnifrakturMaguntia', 'Playfair Display', Georgia, serif;
+    font-size: 58px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+  .masthead .meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 3px 0;
+    margin-top: 6px;
+  }
+
+  .headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 10px 0 4px;
+  }
+  .deck {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .byline {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 260px;
+    background: repeating-linear-gradient(45deg, var(--border-color), var(--border-color) 10px, var(--box-bg) 10px, var(--box-bg) 20px);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .caption {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .article-text {
+    column-count: 2;
+    column-gap: 20px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    text-align: justify;
+  }
+  .article-text p { margin: 0 0 10px; }
+  .article-text p:first-child::first-letter {
+    float: left;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 46px;
+    line-height: 38px;
+    padding-right: 6px;
+    font-weight: 900;
+    color: var(--accent-color);
+  }
+
+  .section-label {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 3px;
+    margin: 16px 0 8px;
+  }
+
+  .sidebar-box {
+    border: 1px solid var(--border-strong);
+    padding: 10px;
+    margin-bottom: 14px;
+    background: var(--box-bg);
+  }
+  .sidebar-box h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+  }
+  .sidebar-box ul {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .weather-box {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 11px;
+    border: 1px solid var(--border-strong);
+    padding: 8px 10px;
+    margin-bottom: 14px;
+  }
+
+  .small-article { margin-bottom: 14px; }
+  .small-article h3 { font-size: 18px; margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; }
+  .small-article p { font-size: 12.5px; line-height: 1.5; margin: 0; text-align: justify; }
+
+  .ad-block {
+    border: 1px dashed var(--border-color);
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 14px; }
+  .data-table caption { font-family: 'Inter', sans-serif; font-size: 10px; text-align: left; color: var(--text-muted); margin-bottom: 4px; }
+  .data-table th, .data-table td { border: 1px solid var(--border-color); padding: 4px 8px; text-align: left; }
+  .data-table th { background: var(--box-bg); font-family: 'Inter', sans-serif; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+  .data-table tr:nth-child(even) td { background: var(--box-bg); }
+
+  /* Code block — intentionally theme-invariant (console styling) */
+  .code-block {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block .kw { color: #569cd6; }
+  .code-block .fn { color: #dcdcaa; }
+  .code-block .str { color: #ce9178; }
+  .code-block .com { color: #6a9955; }
+  .code-block .num { color: #b5cea8; }
+
+  /* Three-column quick-reads section */
+  .three-col { column-count: 3; column-gap: 14px; font-size: 11.5px; line-height: 1.5; margin-bottom: 10px; }
+  .three-col .col-item { break-inside: avoid; margin-bottom: 10px; }
+  .three-col h5 { font-size: 12.5px; margin: 0 0 3px; border-bottom: 1px solid var(--border-color); }
+  .three-col p { margin: 0; }
+
+  /* Math / equation block */
+  .equation-box {
+    text-align: center;
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 14px;
+    font-size: 15px;
+  }
+  .equation-box .eq-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  @media print {
+    @page {
+      size: 30in 22.75in;
+      margin: 0;
+    }
+
+    html, body {
+      width: calc(var(--page-w) * 2);
+      height: var(--page-h);
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      overflow: hidden;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .controls { display: none; }
+
+    .spread {
+      margin: 0;
+      box-shadow: none;
+      break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body class="theme-parchment">
+
+  <div class="controls">
+    <button class="print-btn" id="print-btn">Print PDF</button>
+    <span class="label">The Daily Herald &mdash; broadsheet spread, 30in &times; 22.75in landscape</span>
+    <div class="theme-picker">
+      <button class="theme-btn active" data-theme="parchment">Parchment</button>
+      <button class="theme-btn" data-theme="light">Modern Light</button>
+      <button class="theme-btn" data-theme="dark">Midnight</button>
+    </div>
+  </div>
+
+  <div class="spread">
+    <div class="border"></div>
+    <div class="fold-line"></div>
+
+    <div class="pages">
+
+      <!-- LEFT PAGE -->
+      <div class="page left">
+       <div class="page-content">
+        <div class="masthead">
+          <div class="name">The Daily Herald</div>
+          <div class="meta-row">
+            <span>Vol. CXLII, No. 187</span>
+            <span>Wednesday, July 8, 2026</span>
+            <span>Price: ₹10</span>
+          </div>
+        </div>
+
+        <div class="corner-word-box">
+          <div class="kicker">Word of the Day</div>
+          <div class="word">Ephemeral</div>
+          <div class="pos">adjective</div>
+          <div class="def">Lasting for a very short time; transient, fleeting.</div>
+        </div>
+
+        <div class="headline">City Council Approves New Riverside Park After Years of Debate</div>
+        <div class="deck">Long-delayed green space project finally breaks ground, promising 40 acres of public land by next spring</div>
+        <div class="byline">By A. Correspondent &nbsp;|&nbsp; Staff Reporter</div>
+
+        <div class="hero-img">[ Photograph — Riverside Park groundbreaking ceremony ]</div>
+        <div class="caption">City officials break ground on the long-awaited Riverside Park project Tuesday morning.</div>
+
+        <div class="article-text">
+          <p>After nearly a decade of proposals, public hearings, and budget revisions, the City Council voted unanimously Tuesday to approve construction of a new 40-acre riverside park, marking one of the largest public land investments in the city's recent history.</p>
+          <p>The project, first proposed in 2018, faced repeated delays due to funding shortfalls and disputes over land use along the eastern riverbank. Officials say construction will begin this autumn, with the first phase expected to open to the public within eighteen months.</p>
+          <p>The park will include walking trails, a community amphitheater, and restored wetland habitat intended to reduce flooding in nearby neighborhoods. Local advocacy groups, who have pushed for the project since its inception, called the vote a long-overdue victory for the community.</p>
+          <p>Mayor's office representatives noted the project was made possible in part by a state infrastructure grant secured earlier this year, easing pressure on the municipal budget and allowing the plan to move forward without additional local taxes.</p>
+        </div>
+
+        <div class="section-label">In Brief</div>
+        <div class="small-article">
+          <h3>Local School Wins Regional Robotics Championship</h3>
+          <p>Students from Lincoln High took first place at the regional robotics finals over the weekend, advancing to the national round next month.</p>
+        </div>
+        <div class="small-article">
+          <h3>Transit Authority Announces Fare Changes Starting August</h3>
+          <p>Monthly transit passes will see a modest price adjustment beginning next month, officials confirmed Tuesday, citing rising maintenance costs.</p>
+        </div>
+       </div>
+      </div>
+
+      <!-- RIGHT PAGE -->
+      <div class="page right">
+       <div class="page-content">
+        <div class="weather-box">
+          <span>&#9728; Today: 34&deg;C, Clear</span>
+          <span>Tomorrow: 32&deg;C, Partly Cloudy</span>
+          <span>Humidity: 58%</span>
+        </div>
+
+        <div class="sidebar-box">
+          <h4>Inside Today</h4>
+          <ul>
+            <li>Business — Markets rally on tech earnings ........ Pg. 4</li>
+            <li>Sports — Local team clinches playoff berth ........ Pg. 7</li>
+            <li>Opinion — Editorial: The case for the park ........ Pg. 9</li>
+            <li>Classifieds ............................................ Pg. 12</li>
+          </ul>
+        </div>
+
+        <div class="section-label">Business</div>
+        <div class="small-article">
+          <h3>Regional Bank Reports Strong Quarterly Growth</h3>
+          <p>The bank posted a 12% increase in net profit for the quarter, driven largely by growth in small business lending across the metro area.</p>
+        </div>
+
+        <div class="section-label">Opinion</div>
+        <div class="small-article">
+          <h3>Editorial: A Park Worth the Wait</h3>
+          <p>After years of delay, the new riverside park represents more than just green space — it is a signal that long-term public investment can still win out over short-term budget politics. Residents who have watched this project stall for a decade have earned the right to a little cautious optimism.</p>
+        </div>
+
+        <div class="section-label">Science</div>
+        <div class="small-article">
+          <h3>Local University Team Publishes Work on Orbital Decay</h3>
+          <p>Researchers modeling satellite drag published updated estimates this week for low-orbit decay timing, using the classical relation below to approximate altitude loss per orbit.</p>
+        </div>
+        <div class="equation-box">
+          <div class="eq-label">Orbital Decay Rate</div>
+          $$ \Delta a = -\frac{2\pi C_D A}{m} \rho(a) a^2 $$
+        </div>
+
+        <div class="section-label">Sports &mdash; Standings</div>
+        <table class="data-table">
+          <caption>Regional League — Week 14 Standings</caption>
+          <thead>
+            <tr><th>Team</th><th>W</th><th>L</th><th>Pct.</th><th>GB</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ironclads</td><td>81</td><td>52</td><td>.609</td><td>&mdash;</td></tr>
+            <tr><td>River Hawks</td><td>76</td><td>57</td><td>.571</td><td>5.0</td></tr>
+            <tr><td>Northside FC</td><td>70</td><td>63</td><td>.526</td><td>11.0</td></tr>
+            <tr><td>Harbormen</td><td>65</td><td>68</td><td>.489</td><td>16.0</td></tr>
+          </tbody>
+        </table>
+
+        <div class="section-label">Puzzle of the Day &mdash; Code Challenge</div>
+        <div class="small-article">
+          <p>Readers' Corner: what does the following snippet print? Solution in tomorrow's edition.</p>
+        </div>
+        <div class="code-block">
+<span class="kw">function</span> <span class="fn">mystery</span>(n) {
+  <span class="kw">let</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    [a, b] = [b, a + b];
+  }
+  <span class="kw">return</span> a;
+}
+<span class="com">// What is mystery(10)?</span>
+<span class="fn">console</span>.log(<span class="fn">mystery</span>(<span class="num">10</span>));</div>
+
+        <div class="section-label">Quick Reads</div>
+        <div class="three-col">
+          <div class="col-item">
+            <h5>Library Extends Hours</h5>
+            <p>The central branch will stay open until 9pm on weekdays starting next month.</p>
+          </div>
+          <div class="col-item">
+            <h5>Farmers Market Returns</h5>
+            <p>The Saturday farmers market resumes this weekend at the town square.</p>
+          </div>
+          <div class="col-item">
+            <h5>Road Closure Notice</h5>
+            <p>Main Street will be closed for repaving between 5th and 8th Ave through Friday.</p>
+          </div>
+        </div>
+
+        <div class="ad-block">[ Advertisement Space ]</div>
+       </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ===== Theme picker (adapted from script.js, sans localStorage —
+       kept in-memory only since this file is a standalone print
+       artifact rather than a persistent web app) ===== */
+    const body = document.body;
+    const themeBtns = document.querySelectorAll('.theme-btn');
+
+    function setTheme(themeName) {
+      body.classList.remove('theme-parchment', 'theme-light', 'theme-dark');
+      body.classList.add(`theme-${themeName}`);
+      themeBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === themeName);
+      });
+      // Re-run the fit check: switching themes can change font metrics
+      // slightly (different font-weight rendering) which can shift height.
+      setTimeout(fitAllPages, 50);
+    }
+
+    themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => setTheme(btn.getAttribute('data-theme')));
+    });
+
+    document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+    /* ===== Auto-fit: shrinks each .page's content to fit the page's
+       height if it would otherwise overflow, instead of letting
+       overflow:hidden on .page silently clip it. ===== */
+    function fitPage(pageEl) {
+      const inner = pageEl.querySelector('.page-content');
+      if (!inner) return;
+      inner.style.transform = 'none';
+      inner.style.width = '100%';
+      const available = pageEl.clientHeight;
+      const needed = inner.scrollHeight;
+      if (needed > available) {
+        const scale = available / needed;
+        inner.style.width = (100 / scale) + '%';
+        inner.style.transform = `scale(${scale})`;
+      }
+    }
+
+    function fitAllPages() {
+      document.querySelectorAll('.page').forEach(fitPage);
+    }
+
+    window.addEventListener('load', () => setTimeout(fitAllPages, 300));
+    window.addEventListener('beforeprint', fitAllPages);
+    window.addEventListener('resize', fitAllPages);
+  </script>
+
+</body>
+</html>
