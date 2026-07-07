@@ -1,263 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Daily Chronicle - The World's Finest Digital Broadsheet. Breaking news, deep insights, and historical editorial coverage.">
-  <title>The Daily Chronicle — Digital Broadsheet</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Google Fonts: Playfair Display for headers, UnifrakturMaguntia for gothic title, and Lora / Inter for text -->
+  <meta name="description"
+    content="The Daily Herald — A classic broadsheet newspaper spread with print-ready layout, three themes, and auto-fit content scaling.">
+  <title>The Daily Herald — Print</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=UnifrakturMaguntia&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    /* ===== Physical page tokens ===== */
+    :root {
+      --page-w: 15in;
+      --page-h: 22.75in;
+      --margin: 0.5in;
+    }
+
+    /* ===== Theme tokens ===== */
+    .theme-parchment {
+      --bg-page: #666;
+      --bg-card: #fdfcf7;
+      --box-bg: #f5f2e9;
+      --text-color: #24221f;
+      --text-muted: #5c5750;
+      --border-color: #b9b2a0;
+      --border-strong: #3b3730;
+      --accent-color: #8c2d2d;
+      --accent-hover: #b03a3a;
+      --shadow-color: rgba(43, 38, 30, 0.35);
+    }
+
+    .theme-light {
+      --bg-page: #94a3b8;
+      --bg-card: #ffffff;
+      --box-bg: #f1f5f9;
+      --text-color: #212529;
+      --text-muted: #6c757d;
+      --border-color: #cbd5e1;
+      --border-strong: #0f172a;
+      --accent-color: #1e40af;
+      --accent-hover: #3b82f6;
+      --shadow-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .theme-dark {
+      --bg-page: #0b0b0b;
+      --bg-card: #1e1e1e;
+      --box-bg: #262626;
+      --text-color: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --border-color: #444444;
+      --border-strong: #e0e0e0;
+      --accent-color: #d35400;
+      --accent-hover: #e67e22;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-monochrome {
+      --bg-page: #404040;
+      --bg-card: #f5f5f5;
+      --box-bg: #ebebeb;
+      --text-color: #111111;
+      --text-muted: #555555;
+      --border-color: #aaaaaa;
+      --border-strong: #111111;
+      --accent-color: #111111;
+      --accent-hover: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 10px 10px;
+      /* 10px sides → equal gap left & right of the spread */
+      background: var(--bg-page);
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* center so gaps are symmetric */
+      width: fit-content;
+      /* body grows as wide as .spread so right gap renders */
+      min-width: 100%;
+      /* never narrower than the viewport */
+      gap: 10px;
+      overflow: auto;
+      transition: background-color 0.25s ease;
+    }
+
+    /* ===== Compact sticky top-nav ===== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: #1a1a1a;
+      color: #f0ede4;
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 0.72rem;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid #333;
+      width: fit-content;
+      min-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-title {
+      font-family: 'UnifrakturMaguntia', Georgia, serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .nav-edition {
+      font-size: 0.68rem;
+      color: #aaa;
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-widgets {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Print button */
+    .print-btn {
+      padding: 5px 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: none;
+      border-radius: 3px;
+      background: var(--accent-color, #8c2d2d);
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .print-btn:hover {
+      filter: brightness(1.2);
+    }
+
+    /* Theme dropdown */
+    .theme-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-select-wrap label {
+      font-size: 0.68rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .theme-select {
+      background: #2a2a2a;
+      color: #f0ede4;
+      border: 1px solid #555;
+      border-radius: 3px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      font-family: 'Inter', Arial, sans-serif;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .theme-select:hover,
+    .theme-select:focus {
+      border-color: #888;
+    }
+
+
+    /* ===== The spread ===== */
+    .spread {
+      width: calc(var(--page-w) * 2);
+      max-width: none;
+      /* prevent any implicit viewport clamping */
+      box-sizing: border-box;
+      height: var(--page-h);
+      background: var(--bg-card);
+      position: relative;
+      box-shadow: 0 0 20px var(--shadow-color);
+      transition: background-color 0.25s ease;
+    }
+
+    .border {
+      position: absolute;
+      top: var(--margin);
+      left: var(--margin);
+      right: var(--margin);
+      bottom: var(--margin);
+      border: 2px solid var(--border-strong);
+    }
+
+    .fold-line {
+      position: absolute;
+      top: var(--margin);
+      bottom: var(--margin);
+      left: 50%;
+      border-left: 1px dashed var(--border-color);
+    }
+
+    .pages {
+      position: absolute;
+      top: calc(var(--margin) + 14px);
+      bottom: calc(var(--margin) + 14px);
+      left: calc(var(--margin) + 14px);
+      right: calc(var(--margin) + 14px);
+      display: flex;
+    }
+
+    .page {
+      width: 50%;
+      padding: 0 20px;
+      overflow: hidden;
+      /* safety clip: physical page boundary */
+      position: relative;
+    }
+
+    .page.left {
+      padding-left: 4px;
+    }
+
+    .page.right {
+      padding-right: 4px;
+    }
+
+    .page-content {
+      transform-origin: top left;
+    }
+
+    /* ===== Word of the Day — corner box ===== */
+    .corner-word-box {
+      float: right;
+      width: 150px;
+      border: 2px solid var(--border-strong);
+      padding: 8px;
+      margin: 0 0 8px 12px;
+      background: var(--box-bg);
+      text-align: center;
+    }
+
+    .corner-word-box .kicker {
+      font-family: 'Inter', sans-serif;
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .corner-word-box .word {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 3px 0 1px;
+      color: var(--accent-color);
+    }
+
+    .corner-word-box .pos {
+      font-style: italic;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .corner-word-box .def {
+      font-size: 9.5px;
+      line-height: 1.3;
+    }
+
+    /* ===== Masthead ===== */
+    .masthead {
+      text-align: center;
+      border-bottom: 3px double var(--border-strong);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .masthead .name {
+      font-family: 'UnifrakturMaguntia', 'Playfair Display', Georgia, serif;
+      font-size: 58px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .masthead .meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 3px 0;
+      margin-top: 6px;
+    }
+
+    .headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.05;
+      margin: 10px 0 4px;
+    }
+
+    .deck {
+      font-size: 17px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .byline {
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 260px;
+      background: repeating-linear-gradient(45deg, var(--border-color), var(--border-color) 10px, var(--box-bg) 10px, var(--box-bg) 20px);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .caption {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .article-text {
+      column-count: 2;
+      column-gap: 20px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    .article-text p {
+      margin: 0 0 10px;
+    }
+
+    .article-text p:first-child::first-letter {
+      float: left;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 46px;
+      line-height: 38px;
+      padding-right: 6px;
+      font-weight: 900;
+      color: var(--accent-color);
+    }
+
+    .section-label {
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      border-bottom: 2px solid var(--border-strong);
+      padding-bottom: 3px;
+      margin: 16px 0 8px;
+    }
+
+    .sidebar-box {
+      border: 1px solid var(--border-strong);
+      padding: 10px;
+      margin-bottom: 14px;
+      background: var(--box-bg);
+    }
+
+    .sidebar-box h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+    }
+
+    .sidebar-box ul {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .weather-box {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 11px;
+      border: 1px solid var(--border-strong);
+      padding: 8px 10px;
+      margin-bottom: 14px;
+    }
+
+    .small-article {
+      margin-bottom: 14px;
+    }
+
+    .small-article h3 {
+      font-size: 18px;
+      margin: 0 0 4px;
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .small-article p {
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin: 0;
+      text-align: justify;
+    }
+
+    .ad-block {
+      border: 1px dashed var(--border-color);
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* Data table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      margin-bottom: 14px;
+    }
+
+    .data-table caption {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      text-align: left;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid var(--border-color);
+      padding: 4px 8px;
+      text-align: left;
+    }
+
+    .data-table th {
+      background: var(--box-bg);
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table tr:nth-child(even) td {
+      background: var(--box-bg);
+    }
+
+    /* Code block — intentionally theme-invariant (console styling) */
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-block .kw {
+      color: #569cd6;
+    }
+
+    .code-block .fn {
+      color: #dcdcaa;
+    }
+
+    .code-block .str {
+      color: #ce9178;
+    }
+
+    .code-block .com {
+      color: #6a9955;
+    }
+
+    .code-block .num {
+      color: #b5cea8;
+    }
+
+    /* Three-column quick-reads section */
+    .three-col {
+      column-count: 3;
+      column-gap: 14px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .three-col .col-item {
+      break-inside: avoid;
+      margin-bottom: 10px;
+    }
+
+    .three-col h5 {
+      font-size: 12.5px;
+      margin: 0 0 3px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .three-col p {
+      margin: 0;
+    }
+
+    /* Math / equation block */
+    .equation-box {
+      text-align: center;
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 14px;
+      font-size: 15px;
+    }
+
+    .equation-box .eq-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* ===== Print — minimal, identical to broadsheet_spread_print.html ===== */
+    @media print {
+      @page {
+        size: 30in 22.75in;
+        /* Literal value, no calc() */
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: calc(var(--page-w) * 2);
+        height: var(--page-h);
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        overflow: hidden;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .top-nav {
+        display: none;
+      }
+
+
+      .spread {
+        margin: 0;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
 </head>
+
 <body class="theme-parchment">
 
-  <!-- TOP BAR: Navigation, Printing, and Theme Switcher -->
-  <div class="top-nav">
-    <div class="top-nav-container">
-      <div class="edition-label">
-        <span class="edition-title">THE DAILY CHRONICLE</span>
-        <span class="edition-type">— Broad Sheet Edition</span>
+  <nav class="top-nav" id="top-nav">
+    <div class="nav-brand">
+      <span class="nav-title">The Daily Herald</span>
+      <span class="nav-edition">Broadsheet &mdash; 30in &times; 22.75in landscape</span>
+    </div>
+    <div class="nav-widgets">
+      <div class="theme-select-wrap">
+        <label for="theme-select">Theme</label>
+        <select class="theme-select" id="theme-select">
+          <option value="parchment" selected>Parchment</option>
+          <option value="light">Modern Light</option>
+          <option value="dark">Midnight</option>
+          <option value="monochrome">Monochrome</option>
+        </select>
       </div>
-      <div class="header-widgets">
-        <button class="print-btn" id="print-newspaper-btn" aria-label="Print Full Broadsheet">Print Edition</button>
-        <div class="theme-picker">
-          <button class="theme-btn active" data-theme="parchment" id="btn-theme-parchment" aria-label="Parchment Theme">Parchment</button>
-          <button class="theme-btn" data-theme="light" id="btn-theme-light" aria-label="Modern Print Theme">Modern Light</button>
-          <button class="theme-btn" data-theme="dark" id="btn-theme-dark" aria-label="Midnight Edition Theme">Midnight</button>
+      <button class="print-btn" id="print-btn">&#128438; Print PDF</button>
+    </div>
+  </nav>
+
+  <div class="spread">
+    <div class="border"></div>
+    <div class="fold-line"></div>
+
+    <div class="pages">
+
+      <!-- LEFT PAGE -->
+      <div class="page left">
+        <div class="page-content">
+          <div class="masthead">
+            <div class="name">The Daily Herald</div>
+            <div class="meta-row">
+              <span>Vol. CXLII, No. 187</span>
+              <span>Wednesday, July 8, 2026</span>
+              <span>Price: ₹10</span>
+            </div>
+          </div>
+
+          <div class="corner-word-box">
+            <div class="kicker">Word of the Day</div>
+            <div class="word">Ephemeral</div>
+            <div class="pos">adjective</div>
+            <div class="def">Lasting for a very short time; transient, fleeting.</div>
+          </div>
+
+          <div class="headline">City Council Approves New Riverside Park After Years of Debate</div>
+          <div class="deck">Long-delayed green space project finally breaks ground, promising 40 acres of public land by
+            next spring</div>
+          <div class="byline">By A. Correspondent &nbsp;|&nbsp; Staff Reporter</div>
+
+          <div class="hero-img">[ Photograph — Riverside Park groundbreaking ceremony ]</div>
+          <div class="caption">City officials break ground on the long-awaited Riverside Park project Tuesday morning.
+          </div>
+
+          <div class="article-text">
+            <p>After nearly a decade of proposals, public hearings, and budget revisions, the City Council voted
+              unanimously Tuesday to approve construction of a new 40-acre riverside park, marking one of the largest
+              public land investments in the city's recent history.</p>
+            <p>The project, first proposed in 2018, faced repeated delays due to funding shortfalls and disputes over
+              land use along the eastern riverbank. Officials say construction will begin this autumn, with the first
+              phase expected to open to the public within eighteen months.</p>
+            <p>The park will include walking trails, a community amphitheater, and restored wetland habitat intended to
+              reduce flooding in nearby neighborhoods. Local advocacy groups, who have pushed for the project since its
+              inception, called the vote a long-overdue victory for the community.</p>
+            <p>Mayor's office representatives noted the project was made possible in part by a state infrastructure
+              grant secured earlier this year, easing pressure on the municipal budget and allowing the plan to move
+              forward without additional local taxes.</p>
+          </div>
+
+          <div class="section-label">In Brief</div>
+          <div class="small-article">
+            <h3>Local School Wins Regional Robotics Championship</h3>
+            <p>Students from Lincoln High took first place at the regional robotics finals over the weekend, advancing
+              to the national round next month.</p>
+          </div>
+          <div class="small-article">
+            <h3>Transit Authority Announces Fare Changes Starting August</h3>
+            <p>Monthly transit passes will see a modest price adjustment beginning next month, officials confirmed
+              Tuesday, citing rising maintenance costs.</p>
+          </div>
         </div>
       </div>
+
+      <!-- RIGHT PAGE -->
+      <div class="page right">
+        <div class="page-content">
+          <div class="weather-box">
+            <span>&#9728; Today: 34&deg;C, Clear</span>
+            <span>Tomorrow: 32&deg;C, Partly Cloudy</span>
+            <span>Humidity: 58%</span>
+          </div>
+
+          <div class="sidebar-box">
+            <h4>Inside Today</h4>
+            <ul>
+              <li>Business — Markets rally on tech earnings ........ Pg. 4</li>
+              <li>Sports — Local team clinches playoff berth ........ Pg. 7</li>
+              <li>Opinion — Editorial: The case for the park ........ Pg. 9</li>
+              <li>Classifieds ............................................ Pg. 12</li>
+            </ul>
+          </div>
+
+          <div class="section-label">Business</div>
+          <div class="small-article">
+            <h3>Regional Bank Reports Strong Quarterly Growth</h3>
+            <p>The bank posted a 12% increase in net profit for the quarter, driven largely by growth in small business
+              lending across the metro area.</p>
+          </div>
+
+          <div class="section-label">Opinion</div>
+          <div class="small-article">
+            <h3>Editorial: A Park Worth the Wait</h3>
+            <p>After years of delay, the new riverside park represents more than just green space — it is a signal that
+              long-term public investment can still win out over short-term budget politics. Residents who have watched
+              this project stall for a decade have earned the right to a little cautious optimism.</p>
+          </div>
+
+          <div class="section-label">Science</div>
+          <div class="small-article">
+            <h3>Local University Team Publishes Work on Orbital Decay</h3>
+            <p>Researchers modeling satellite drag published updated estimates this week for low-orbit decay timing,
+              using the classical relation below to approximate altitude loss per orbit.</p>
+          </div>
+          <div class="equation-box">
+            <div class="eq-label">Orbital Decay Rate</div>
+            $$ \Delta a = -\frac{2\pi C_D A}{m} \rho(a) a^2 $$
+          </div>
+
+          <div class="section-label">Sports &mdash; Standings</div>
+          <table class="data-table">
+            <caption>Regional League — Week 14 Standings</caption>
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>W</th>
+                <th>L</th>
+                <th>Pct.</th>
+                <th>GB</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ironclads</td>
+                <td>81</td>
+                <td>52</td>
+                <td>.609</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td>River Hawks</td>
+                <td>76</td>
+                <td>57</td>
+                <td>.571</td>
+                <td>5.0</td>
+              </tr>
+              <tr>
+                <td>Northside FC</td>
+                <td>70</td>
+                <td>63</td>
+                <td>.526</td>
+                <td>11.0</td>
+              </tr>
+              <tr>
+                <td>Harbormen</td>
+                <td>65</td>
+                <td>68</td>
+                <td>.489</td>
+                <td>16.0</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="section-label">Puzzle of the Day &mdash; Code Challenge</div>
+          <div class="small-article">
+            <p>Readers' Corner: what does the following snippet print? Solution in tomorrow's edition.</p>
+          </div>
+          <div class="code-block">
+            <span class="kw">function</span> <span class="fn">mystery</span>(n) {
+            <span class="kw">let</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
+            <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            [a, b] = [b, a + b];
+            }
+            <span class="kw">return</span> a;
+            }
+            <span class="com">// What is mystery(10)?</span>
+            <span class="fn">console</span>.log(<span class="fn">mystery</span>(<span class="num">10</span>));
+          </div>
+
+          <div class="section-label">Quick Reads</div>
+          <div class="three-col">
+            <div class="col-item">
+              <h5>Library Extends Hours</h5>
+              <p>The central branch will stay open until 9pm on weekdays starting next month.</p>
+            </div>
+            <div class="col-item">
+              <h5>Farmers Market Returns</h5>
+              <p>The Saturday farmers market resumes this weekend at the town square.</p>
+            </div>
+            <div class="col-item">
+              <h5>Road Closure Notice</h5>
+              <p>Main Street will be closed for repaving between 5th and 8th Ave through Friday.</p>
+            </div>
+          </div>
+
+          <div class="ad-block">[ Advertisement Space ]</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <div class="newspaper-container">
-    
-    <!-- MASTHEAD / HEADER -->
-    <header class="masthead">
-      <div class="masthead-meta-top">
-        <span>No. 41,208</span>
-        <span>ESTABLISHED 1888</span>
-        <span>LONDON, WEDNESDAY, JULY 8, 2026</span>
-      </div>
-      
-      <h1 class="masthead-title">The Daily Chronicle</h1>
-      <p class="masthead-tagline">The World's Finest Digital Broadsheet • Today's News Today</p>
-      
-      <div class="masthead-meta-bottom">
-        <span>WEATHER: FAIR</span>
-        <span>ONE SHILLING & SIXPENCE</span>
-        <span>LATEST TELEGRAPHIC DISPATCHES</span>
-      </div>
-    </header>
+  <script>
+    /* ===== Theme dropdown ===== */
+    const body = document.body;
+    const themeSelect = document.getElementById('theme-select');
+    const allThemes = ['theme-parchment', 'theme-light', 'theme-dark', 'theme-monochrome'];
 
-    <!-- MAIN BROADSHEET GRID -->
-    <main class="broadsheet-grid">
-      
-      <!-- LEFT + CENTER COLUMN: LEAD STORIES -->
-      <section class="main-content-area">
-        
-        <!-- HERO LEAD STORY -->
-        <article class="lead-story article-card" data-article-id="lead-story">
-          <h2 class="article-headline font-display">STEAM-POWERED AIRSHIPS REVOLUTIONIZE TRANSATLANTIC TRAVEL</h2>
-          <h3 class="article-subhead">Maiden voyage of the 'Aeon Star' sets record pace, crossing from London to New York in just forty-eight hours.</h3>
-          
-          <div class="article-author-line">
-            <span>By ARTHUR PENDRICK, Aviation Correspondent</span>
-            <span class="dot-separator"></span>
-            <span>July 8, 2026</span>
-          </div>
+    function setTheme(themeName) {
+      body.classList.remove(...allThemes);
+      body.classList.add(`theme-${themeName}`);
+      // Re-run fit after theme switch (font metrics may shift)
+      setTimeout(fitAllPages, 50);
+    }
 
-          <div class="article-media">
-            <img src="lead_story.png" alt="Futuristic steam airship over 19th-century metropolitan skyline" class="newspaper-img">
-            <p class="img-caption">The massive luxury airship 'Aeon Star' gliding majestically above the metropolis before commencing her record-breaking flight across the Atlantic.</p>
-          </div>
+    themeSelect.addEventListener('change', () => setTheme(themeSelect.value));
 
-          <div class="article-body-columns columns-3">
-            <p class="paragraph-lead"><span class="dropcap">I</span>n a historic feat of modern engineering, the gargantuan airship <em>Aeon Star</em> successfully concluded her maiden voyage across the Atlantic Ocean yesterday evening, arriving in New York Harbour amidst a roaring chorus of steam whistles and cheering spectators.</p>
-            <p>The journey, covering more than three thousand miles of open ocean, was completed in a mere forty-eight hours and twelve minutes. This cuts the previous crossing record, held by the steamliner <em>Great Western</em>, by more than half, signaling a new age of commerce and travel.</p>
-            <p>Constructed by the Royal Aeronautical Ironworks in Bristol, the vessel is kept aloft by twenty individual cells of pressurized non-flammable helium gas, propelled by four massive coal-fired steam engines driving multi-blade bronze propellers.</p>
-            <p>Passage aboard the vessel represents the height of luxury, with a grand dining saloon, private staterooms, and a promenade deck featuring floor-to-ceiling reinforced glass viewing galleries. Prominent figures from around the world were counted among the first-class passengers.</p>
-            <p>Engineers reported that the steam boilers performed flawlessly throughout the journey, maintaining a steady cruising speed of eighty knots despite encountering heavy crosswinds near the Grand Banks of Newfoundland. Plans are already underway to double the fleet size by next autumn.</p>
-          </div>
-          
-          <div class="read-more-btn-wrap">
-            <button class="read-more-btn" aria-haspopup="dialog">Read Full Transcript</button>
-          </div>
-        </article>
+    document.getElementById('print-btn').addEventListener('click', () => window.print());
 
-        <hr class="vintage-divider">
+    /* ===== Auto-fit: shrinks each .page's content to fit the page height
+       instead of letting overflow:hidden silently clip it. ===== */
+    function fitPage(pageEl) {
+      const inner = pageEl.querySelector('.page-content');
+      if (!inner) return;
+      inner.style.transform = 'none';
+      inner.style.width = '100%';
+      const available = pageEl.clientHeight;
+      const needed = inner.scrollHeight;
+      if (needed > available) {
+        const scale = available / needed;
+        inner.style.width = (100 / scale) + '%';
+        inner.style.transform = `scale(${scale})`;
+      }
+    }
 
-        <!-- SECONDARY FRONT PAGE STORY -->
-        <div class="secondary-stories-row">
-          
-          <article class="secondary-story article-card" data-article-id="calc-machines">
-            <h2 class="article-headline font-display">THE COAL-FIRED ANALYTICAL ENGINE</h2>
-            <h3 class="article-subhead">Babbage’s grand design scaled for national industrial calculation.</h3>
-            <div class="article-author-line">
-              <span>By LADY ADA LOVELACE II</span>
-            </div>
-            <div class="article-body-columns columns-2">
-              <p><span class="dropcap">T</span>he Ministry of Computing has formally opened the central computing facility in Birmingham. Powered by two massive boilers, the new steam-driven mechanical computer is capable of tabulating census data in minutes rather than decades.</p>
-              <p>The system utilizes thousands of brass gears, shafts, and punch cards to execute complex algorithm suites, ensuring precision calculations for trade routes and maritime navigation tables nationwide.</p>
-            </div>
-            <div class="read-more-btn-wrap">
-              <button class="read-more-btn" aria-haspopup="dialog">Read Full Article</button>
-            </div>
-          </article>
+    function fitAllPages() {
+      document.querySelectorAll('.page').forEach(fitPage);
+    }
 
-          <hr class="vertical-divider">
+    window.addEventListener('load', () => setTimeout(fitAllPages, 300));
+    window.addEventListener('beforeprint', fitAllPages);
+    window.addEventListener('resize', fitAllPages);
+  </script>
 
-          <article class="secondary-story article-card" data-article-id="rail-expansion">
-            <h2 class="article-headline font-display">TRANS-SIBERIAN LINE EXPANDS</h2>
-            <h3 class="article-subhead">Steel rails forge path through frozen plains to the East.</h3>
-            <div class="article-author-line">
-              <span>By NIKOLAI VOLKOV</span>
-            </div>
-            <div class="article-body-columns columns-2">
-              <p><span class="dropcap">A</span> new rail spike has been driven in the heart of Irkutsk, bridging the vast gap between Moscow and the Far East. The locomotive <em>The Northern Giant</em> successfully hauled fifty coaches of cargo through the Urals in record winter temperatures.</p>
-              <p>This expansion promises to open unprecedented trade access to tea and silk markets, while introducing standard time coordination along the entire line.</p>
-            </div>
-            <div class="read-more-btn-wrap">
-              <button class="read-more-btn" aria-haspopup="dialog">Read Full Article</button>
-            </div>
-          </article>
-
-        </div>
-
-      </section>
-
-      <!-- SEPARATOR BETWEEN MAIN CONTENT & SIDEBAR -->
-      <hr class="vertical-divider main-sidebar-divider">
-
-      <!-- RIGHT COLUMN: SIDEBAR -->
-      <aside class="sidebar-area">
-        
-        <!-- SIDEBAR SECTION: SCIENCE CORNER -->
-        <article class="sidebar-section-card article-card" data-article-id="star-signal">
-          <div class="sidebar-label">SCIENCE & COSMOLOGY</div>
-          <h2 class="article-headline font-display small-headline">HARMONIC COSMIC SIGNAL DETECTED</h2>
-          <div class="article-media small-media">
-            <img src="science_story.png" alt="Astronomical clockwork dial and planetary mechanism" class="newspaper-img">
-          </div>
-          <p class="article-intro-text"><span class="dropcap">A</span>stronomers using the newly constructed Greenwich Optical Array have registered a rhythmic electrical pulse originating from the constellation of Orion.</p>
-          <p class="article-intro-text">The signal, repeating every three point one seconds, resembles a harmonic series that cannot be explained by natural planetary or solar operations, sparking debate among the Royal Society.</p>
-          <div class="read-more-btn-wrap">
-            <button class="read-more-btn" aria-haspopup="dialog">Read Details</button>
-          </div>
-        </article>
-
-        <hr class="vintage-divider">
-
-        <!-- SIDEBAR SECTION: INTERACTIVE CROSSWORD -->
-        <section class="sidebar-section-card crossword-section">
-          <div class="sidebar-label">THE DAILY BRAIN TEASER</div>
-          <h3 class="crossword-title font-display">A Miniature Crossword</h3>
-          <p class="crossword-subtitle">Solve the 3×3 grid. Across & Down answers are identical!</p>
-          
-          <div class="crossword-container">
-            <div class="crossword-grid" id="crossword-grid">
-              <!-- Row 1 -->
-              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="0" id="cell-0-0" aria-label="Cell Row 1 Column 1">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="1" id="cell-0-1" aria-label="Cell Row 1 Column 2">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="0" data-col="2" id="cell-0-2" aria-label="Cell Row 1 Column 3">
-              
-              <!-- Row 2 -->
-              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="0" id="cell-1-0" aria-label="Cell Row 2 Column 1">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="1" id="cell-1-1" aria-label="Cell Row 2 Column 2">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="1" data-col="2" id="cell-1-2" aria-label="Cell Row 2 Column 3">
-              
-              <!-- Row 3 -->
-              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="0" id="cell-2-0" aria-label="Cell Row 3 Column 1">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="1" id="cell-2-1" aria-label="Cell Row 3 Column 2">
-              <input type="text" maxlength="1" class="crossword-cell" data-row="2" data-col="2" id="cell-2-2" aria-label="Cell Row 3 Column 3">
-            </div>
-            
-            <div class="crossword-clues">
-              <div class="clue-list">
-                <strong>Clues (Across/Down):</strong>
-                <ol>
-                  <li>1. A small piece or fragment.</li>
-                  <li>2. Water in solid, frozen form.</li>
-                  <li>3. The number after nine.</li>
-                </ol>
-              </div>
-            </div>
-
-            <div class="crossword-actions">
-              <button class="action-btn" id="verify-crossword-btn">Verify Solution</button>
-              <button class="action-btn btn-secondary" id="reset-crossword-btn">Reset</button>
-            </div>
-            <div class="crossword-feedback" id="crossword-feedback" role="status"></div>
-          </div>
-        </section>
-
-        <hr class="vintage-divider">
-
-        <!-- SIDEBAR SECTION: EDITORIAL COLUMN -->
-        <article class="sidebar-section-card article-card" data-article-id="editorial-speed">
-          <div class="sidebar-label">EDITORIAL OPINION</div>
-          <h2 class="article-headline font-display small-headline">THE SPEED OF MODERN LIFE: A CAUTIONARY TALE</h2>
-          <p class="opinion-quote">"We fly across oceans and tabulate cities in seconds, but have we lost the art of the slow, deliberate thought?"</p>
-          <div class="article-author-line">
-            <span>By SAMUEL SPENCER, Editor</span>
-          </div>
-          <p class="article-intro-text">As the steam whistles shriek and computing gears click, one must pause and ponder the trajectory of this rapid century. To rush is to skim the surface of life, leaving deep contemplation in the dust of progress...</p>
-          <div class="read-more-btn-wrap">
-            <button class="read-more-btn" aria-haspopup="dialog">Read Editorial</button>
-          </div>
-        </article>
-
-      </aside>
-
-    </main>
-
-    <!-- VINTAGE CLASSIFIED ADS SECTION -->
-    <hr class="vintage-divider double">
-    <section class="classifieds">
-      <div class="classifieds-header font-display">THE DAILY CHRONICLE CLASSIFIED ADVERTISEMENTS</div>
-      <div class="classifieds-grid">
-        <div class="classified-item">
-          <strong>WANTED: BOILER ASSISTANT</strong>
-          <p>Must have 2 years experience with high-pressure coal systems. Inquire in person at the Royal Dockyard, East Boiler room. Wages: 12s per week.</p>
-        </div>
-        <div class="classified-item">
-          <strong>FOR SALE: MECHANICAL TICKER</strong>
-          <p>One genuine telegraphic receiver, slightly worn, with three rolls of paper tape. Perfect for private merchant house. 40 shillings or nearest offer.</p>
-        </div>
-        <div class="classified-item">
-          <strong>DENTISTRY OF EXCELLENCE</strong>
-          <p>Teeth extracted painless with the aid of the newly discovered laughing gas. Dr. Sterling, 14 Baker St. Consultations daily 9am - 4pm.</p>
-        </div>
-        <div class="classified-item">
-          <strong>LOST: BRASS POCKET WATCH</strong>
-          <p>Engraved with initials 'G.H.' and a crest representing a falcon. Lost near London Bridge on Friday eve. Reward offered upon return to station office.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="newspaper-footer">
-      <div class="footer-decor"></div>
-      <p class="copyright">Copyright © 1888-2026 The Daily Chronicle Printing Syndicate. All Rights Reserved. Delivered via Telegraphic and Fiber-Optic networks.</p>
-    </footer>
-
-  </div>
-
-  <!-- ARTICLE DETAIL DIALOG (MODAL) -->
-  <div class="article-modal" id="article-modal" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-    <div class="modal-backdrop" id="modal-backdrop"></div>
-    <div class="modal-content">
-      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">&times;</button>
-      <div class="modal-newspaper-frame">
-        <div class="modal-masthead-mini">THE DAILY CHRONICLE — READER VIEW</div>
-        <div class="modal-article-container" id="modal-article-content">
-          <!-- Dynamically inserted content will go here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
 </body>
+
 </html>
