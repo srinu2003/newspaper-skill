@@ -15,6 +15,8 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
     onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <!-- html2pdf.js for direct PDF downloading -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     /* ===== Physical page tokens ===== */
     :root {
@@ -508,6 +510,7 @@
       color: #d4d4d4;
       font-family: 'Courier New', Consolas, monospace;
       font-size: 11px;
+      font-weight: 700;
       line-height: 1.5;
       padding: 12px;
       border-radius: 4px;
@@ -796,17 +799,15 @@
           <div class="small-article">
             <p>Readers' Corner: what does the following snippet print? Solution in tomorrow's edition.</p>
           </div>
-          <div class="code-block">
-            <span class="kw">function</span> <span class="fn">mystery</span>(n) {
-            <span class="kw">let</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
-            <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; n; i++) {
-            [a, b] = [b, a + b];
-            }
-            <span class="kw">return</span> a;
-            }
-            <span class="com">// What is mystery(10)?</span>
-            <span class="fn">console</span>.log(<span class="fn">mystery</span>(<span class="num">10</span>));
-          </div>
+<div class="code-block"><span class="kw">function</span> <span class="fn">mystery</span>(n) {
+  <span class="kw">let</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    [a, b] = [b, a + b];
+  }
+  <span class="kw">return</span> a;
+}
+<span class="com">// What is mystery(10)?</span>
+<span class="fn">console</span>.log(<span class="fn">mystery</span>(<span class="num">10</span>));</div>
 
           <div class="section-label">Quick Reads</div>
           <div class="three-col">
@@ -846,7 +847,18 @@
 
     themeSelect.addEventListener('change', () => setTheme(themeSelect.value));
 
-    document.getElementById('print-btn').addEventListener('click', () => window.print());
+    /* ===== Direct PDF Download via html2pdf.js ===== */
+    document.getElementById('print-btn').addEventListener('click', () => {
+      const element = document.querySelector('.spread');
+      const opt = {
+        margin: 0,
+        filename: 'The_Daily_Herald.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: [30, 22.75], orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    });
 
     /* ===== Auto-fit: shrinks each .page's content to fit the page height
        instead of letting overflow:hidden silently clip it. ===== */
